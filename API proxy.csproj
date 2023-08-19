@@ -11,6 +11,11 @@
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
+	  <PackageReference Include="Serilog" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApiProxy.Logic\ApiProxy.Logic.csproj" />
   </ItemGroup>
 
 </Project>
