@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API proxy", "API proxy.csproj", "{CF5FA4DA-E3AA-4143-90D1-D7DE7AEF05EF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D03583B1-32EC-4435-B6FB-C4650E16535E} = {D03583B1-32EC-4435-B6FB-C4650E16535E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiProxy.Logic", "..\ApiProxy.Logic\ApiProxy.Logic.csproj", "{D03583B1-32EC-4435-B6FB-C4650E16535E}"
 EndProject
