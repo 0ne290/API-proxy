@@ -1,5 +1,4 @@
-﻿using System.Timers;
-using System.Text;
+﻿using System.Text;
 using System.Net;
 using ApiProxy.Logic.Models;
 using Newtonsoft.Json;
@@ -8,13 +7,15 @@ namespace ApiProxy.Logic
 {
     public class Api
     {
-        public string ApiUrl { get; set; }
-        public string InnerCallbackInvoices { get; set; }
-        public string? AccessToken { get; set; }
-
-        public string RedirectUrl { get; set; }
-        public string CallbackUrl { get; set; }
-        public string Id { get; set; }
+        public Api(string? apiUrl, string? innerCallbackInvoices, string? accessToken, string? redirectUrl, string? callbackUrl, string? id)
+        {
+            ApiUrl = apiUrl;
+            InnerCallbackInvoices = innerCallbackInvoices;
+            AccessToken = accessToken;
+            RedirectUrl = redirectUrl;
+            CallbackUrl = callbackUrl;
+            Id = id;
+        }
 
         public bool Fiats(string fiatsUrl, out ResponseJson resJson, out HttpStatusCode code)
         {
@@ -66,5 +67,12 @@ namespace ApiProxy.Logic
             resJson.Message = error;
             return true;
         }
+
+        public string? ApiUrl { get; set; }
+        public string? InnerCallbackInvoices { get; set; }
+        public string? AccessToken { get; set; }
+        public string? RedirectUrl { get; set; }
+        public string? CallbackUrl { get; set; }
+        public string? Id { get; set; }
     }
 }
