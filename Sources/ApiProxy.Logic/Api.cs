@@ -17,15 +17,12 @@ namespace ApiProxy.Logic
             Id = id;
         }
 
-        public bool Fiats(string fiatsUrl, out ResponseJson resJson, out HttpStatusCode code)
+        public List<Fiat>? Fiats(string fiatsUrl)
         {
-            string error;
-            string resUrl = ApiUrl + fiatsUrl;
-            List<Fiat>? res = Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, out error, AccessToken, out code);
-            resJson = new ResponseJson();
-            resJson.Response = res;
-            resJson.Message = error;
-            return true;
+            var resUrl = $"{ApiUrl}{fiatsUrl}";
+            var res = Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, out var error, AccessToken, out var code);
+            if (code != HttpStatusCode.OK) throw new Exception($"http code [{code}], message [{error}]");
+            return res;
         }
         /// <summary>
         /// Формируем счет на оплату в крипте
