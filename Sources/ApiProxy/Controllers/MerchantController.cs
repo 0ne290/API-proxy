@@ -29,7 +29,7 @@ namespace PublicApi.Controllers
         /// </summary>
         public IActionResult Registration([FromServices] MyDbContext db, string? login = null, string? password = null, string? redirectUrl = null, string? callbackUrl = null )
         {
-            ResponseJson resJson = new ResponseJson();
+            ApiProxy.Logic.Models.ResponseJson resJson = new ApiProxy.Logic.Models.ResponseJson();
             resJson.Response = "Request to merchant registration";
             resJson.Message = "Fail. Set correct values for required parameters";
             if (login == null || password == null || redirectUrl == null || callbackUrl == null)
@@ -62,7 +62,7 @@ namespace PublicApi.Controllers
         /// </summary>
         public IActionResult GetRefreshToken([FromServices] MyDbContext db, string? login = null, string? password = null)
         {
-            ResponseJson resJson = new ResponseJson();
+            ApiProxy.Logic.Models.ResponseJson resJson = new ApiProxy.Logic.Models.ResponseJson();
             resJson.Response = "Request to get merchant refresh token";
             resJson.Message = "Fail. Set correct values for required parameters";
             if (login == null || password == null)
@@ -99,7 +99,7 @@ namespace PublicApi.Controllers
             DatabaseContext.Merchant? merchant = db.Merchants.Find(merchantIdentity.Name);
             db.Dispose();
 
-            ResponseJson resJson = new ResponseJson();
+            ApiProxy.Logic.Models.ResponseJson resJson = new ApiProxy.Logic.Models.ResponseJson();
             resJson.Response = "Merchant get access token request";
             resJson.Message = "Fail. Refresh token not found";
             if (merchant == null)
@@ -124,7 +124,7 @@ namespace PublicApi.Controllers
         /// </summary>
         public IActionResult SetRedirect([FromServices] MyDbContext db, string? redirectUrl = null)
         {
-            ResponseJson resJson = new ResponseJson();
+            ApiProxy.Logic.Models.ResponseJson resJson = new ApiProxy.Logic.Models.ResponseJson();
             resJson.Response = "Request to set merchant redirect URL";
             resJson.Message = "Fail. Set correct values for required parameters";
             if (redirectUrl == null)
@@ -152,7 +152,7 @@ namespace PublicApi.Controllers
         /// </summary>
         public IActionResult SetCallback([FromServices] MyDbContext db, string? callbackUrl = null)
         {
-            ResponseJson resJson = new ResponseJson();
+            ApiProxy.Logic.Models.ResponseJson resJson = new ApiProxy.Logic.Models.ResponseJson();
             resJson.Response = "Request to set merchant callback URL";
             resJson.Message = "Fail. Set correct values for required parameters";
             if (callbackUrl == null)

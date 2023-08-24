@@ -1,4 +1,4 @@
-﻿namespace PublicApi.Models
+﻿namespace ApiProxy.Logic.Models
 {
     /// <summary>
     /// Универсальный ответ нашим мерчантам. Чаще всего используется в формате
