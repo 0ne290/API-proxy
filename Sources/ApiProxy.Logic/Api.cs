@@ -2,6 +2,9 @@
 using System.Net;
 using ApiProxy.Logic.Models;
 using Newtonsoft.Json;
+using System.Net.Http;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Drawing;
 
 namespace ApiProxy.Logic
 {
@@ -19,50 +22,56 @@ namespace ApiProxy.Logic
 
         public List<Fiat>? Fiats(string fiatsUrl)
         {
-            var resUrl = $"{ApiUrl}{fiatsUrl}";
-            var res = Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, out var error, AccessToken, out var code);
-            if (code != HttpStatusCode.OK) throw new Exception($"http code [{code}], message [{error}]");
-            return res;
+            try
+            {
+                var resUrl = $"{ApiUrl}{fiatsUrl}";
+                var res = Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, AccessToken);
+                return res;
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
         }
         /// <summary>
         /// Формируем счет на оплату в крипте
         /// </summary>
-        public bool InvoicesCryptocurrency(string? pCoin, int? pAmount, string invoicesUrl, out ResponseJson resJson, out HttpStatusCode code)
+        public InvoiceResponse InvoicesCryptocurrency(string? pCoin, int? pAmount, string invoicesUrl)
         {
-            resJson = new ResponseJson();
-            resJson.Response = "Request to create an invoice in cryptocurrency";
-            resJson.Message = "Fail. Set correct values for required parameters";
-            code = HttpStatusCode.BadRequest;
             if (pCoin == null || pAmount == null)
-                return false;
-            string error;
-            string resUrl = ApiUrl + invoicesUrl;
-            InvoiceCryptocurrencyCreate body = new InvoiceCryptocurrencyCreate() { RedirectUrl = RedirectUrl, CallbackUrl = InnerCallbackInvoices + Id, Coin = pCoin, Amount = pAmount.ToString() };
-            Invoice? res = Tools.SendRequest<StringContent, Invoice>(new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"), HttpMethod.Post, resUrl, out error, AccessToken, out code);
-            resJson.Response = (InvoiceResponse)res;
-            ((InvoiceResponse)resJson.Response).CallbackUrl = CallbackUrl;
-            resJson.Message = error;
-            return true;
+                throw new Exception("Set correct values");
+            try
+            {
+                var resUrl = $"{ApiUrl}{invoicesUrl}";
+                var body = new InvoiceCryptocurrencyCreate() { RedirectUrl = RedirectUrl, CallbackUrl = InnerCallbackInvoices + Id, Coin = pCoin, Amount = pAmount.ToString() };
+                var res = (InvoiceResponse)Tools.SendRequest<StringContent, Invoice>(new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"), HttpMethod.Post, resUrl, AccessToken);
+                res.CallbackUrl = CallbackUrl;
+                return res;
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
         }
         /// <summary>
         /// Формируем счет на оплату в фиате
         /// </summary>
-        public bool InvoicesFiat(string? pFiat, int? pAmount, string invoicesUrl, out ResponseJson resJson, out HttpStatusCode code)
+        public InvoiceResponse InvoicesFiat(string? pFiat, int? pAmount, string invoicesUrl)
         {
-            resJson = new ResponseJson();
-            resJson.Response = "Request to create an invoice in fiat";
-            resJson.Message = "Fail. Set correct values for required parameters";
-            code = HttpStatusCode.BadRequest;
             if (pFiat == null || pAmount == null)
-                return false;
-            string error;
-            string resUrl = ApiUrl + invoicesUrl;
-            InvoiceFiatCreate body = new InvoiceFiatCreate() { RedirectUrl = RedirectUrl, CallbackUrl = InnerCallbackInvoices + Id, Fiat = pFiat, FiatAmount = pAmount.ToString() };
-            Invoice? res = Tools.SendRequest<StringContent, Invoice>(new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"), HttpMethod.Post, resUrl, out error, AccessToken, out code);
-            resJson.Response = (InvoiceResponse)res;
-            ((InvoiceResponse)resJson.Response).CallbackUrl = CallbackUrl;
-            resJson.Message = error;
-            return true;
+                throw new Exception("Set correct values");
+            try
+            {
+                var resUrl = $"{ApiUrl}{invoicesUrl}";
+                var body = new InvoiceFiatCreate() { RedirectUrl = RedirectUrl, CallbackUrl = InnerCallbackInvoices + Id, Fiat = pFiat, FiatAmount = pAmount.ToString() };
+                var res = (InvoiceResponse)Tools.SendRequest<StringContent, Invoice>(new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"), HttpMethod.Post, resUrl, AccessToken);
+                res.CallbackUrl = CallbackUrl;
+                return res;
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
         }
 
         public string? ApiUrl { get; set; }
