@@ -35,12 +35,6 @@ namespace PublicApi.Controllers
         {
             _appConfig = appConfig;
             _db = db;
-            _api = new Api()
-            {
-                ApiUrl = _appConfig?["Api:RootUrl"] ?? "https://api.staging.pay2play.cash",
-                InnerCallbackInvoices = _appConfig?["Api:InnerCallbackInvoicesUrl"] ?? "https://MyDomain/Callback/1f8976d4-149e-4aa0-89aa-e766d89cfc7d/",
-                AccessToken = _accessToken
-            };
         }
 		
 		static ApiController()
@@ -72,21 +66,42 @@ namespace PublicApi.Controllers
 
         public void Init()
         {
-            _api.Id = ((ClaimsIdentity)(HttpContext.User.Identity)).Name;
-            DatabaseContext.Merchant? merchant = _db.Merchants.Find(_api.Id);
+            string? id = ((ClaimsIdentity)(HttpContext.User.Identity)).Name;
+            DatabaseContext.Merchant? merchant = _db.Merchants.Find(id);
             _db.Dispose();
-            _api.RedirectUrl = merchant.MerchantRedirectUrl;
-            _api.CallbackUrl = merchant.MerchantCallbackUrl;
+            _api = new Api
+            (
+                _appConfig?["Api:RootUrl"] ?? "https://api.staging.pay2play.cash",
+                _appConfig?["Api:InnerCallbackInvoicesUrl"] ?? "https://MyDomain/Callback/1f8976d4-149e-4aa0-89aa-e766d89cfc7d/",
+                _accessToken,
+                merchant.MerchantRedirectUrl,
+                merchant.MerchantCallbackUrl,
+                id
+            );
         }
 
         [HttpGet("{action}")]
         public IActionResult Fiats()
         {
             Init();
-            ApiProxy.Logic.Models.ResponseJson resJson;
-            HttpStatusCode code;
-            _api.Fiats(_appConfig?["Api:FiatsUrl"] ?? "/v1/fiats", out resJson, out code);
-            return new CustomJsonResult(resJson, code);
+            try
+            {
+                var res = _api.Fiats(_appConfig?["Api:FiatsUrl"] ?? "/v1/fiats");
+                return Json(res);
+            }
+            catch (Exception exception)
+            {
+                if (exception.Message == "ErrorProcessingException")
+                {
+                    Console.WriteLine($"Request error! StatusCode: {(HttpStatusCode)exception.Data["StatusCode"]}; Message: {(string)exception.Data["MessageFromTheApiServer"]}");
+                    return new CustomJsonResult(new { Message = (string)exception.Data["MessageForClient"] }, (HttpStatusCode)exception.Data["StatusCode"]);
+                }
+                else
+                {
+                    Console.WriteLine($"Unknown error! Message: {exception.Message}");
+                    return StatusCode(500);
+                }
+            }
         }
         [HttpPost("{action}")]
         /// <summary>
@@ -95,10 +110,26 @@ namespace PublicApi.Controllers
         public IActionResult InvoicesCryptocurrency(string? pCoin = null, int? pAmount = null)
         {
             Init();
-            ApiProxy.Logic.Models.ResponseJson resJson;
-            HttpStatusCode code;
-            _api.InvoicesCryptocurrency(pCoin, pAmount, _appConfig?["Api:InvoicesUrl"] ?? "/v1/invoices", out resJson, out code);
-            return new CustomJsonResult(resJson, code);
+            try
+            {
+                var res = _api.InvoicesCryptocurrency(pCoin, pAmount, _appConfig?["Api:InvoicesUrl"] ?? "/v1/invoices");
+                return Json(res);
+            }
+            catch (Exception exception)
+            {
+                if (exception.Message == "ErrorProcessingException")
+                {
+                    Console.WriteLine($"Request error! StatusCode: {(HttpStatusCode)exception.Data["StatusCode"]}; Message: {(string)exception.Data["MessageFromTheApiServer"]}");
+                    return new CustomJsonResult(new { Message = (string)exception.Data["MessageForClient"] }, (HttpStatusCode)exception.Data["StatusCode"]);
+                }
+                else if (exception.Message == "Set correct values")
+                    return new CustomJsonResult(new { Message = exception.Message }, HttpStatusCode.BadRequest);
+                else
+                {
+                    Console.WriteLine($"Unknown error! Message: {exception.Message}");
+                    return StatusCode(500);
+                }
+            }
         }
         [HttpPost("{action}")]
         /// <summary>
@@ -107,10 +138,26 @@ namespace PublicApi.Controllers
         public IActionResult InvoicesFiat(string? pFiat = null, int? pAmount = null)
         {
             Init();
-            ApiProxy.Logic.Models.ResponseJson resJson;
-            HttpStatusCode code;
-            _api.InvoicesFiat(pFiat, pAmount, _appConfig?["Api:InvoicesUrl"] ?? "/v1/invoices", out resJson, out code);
-            return new CustomJsonResult(resJson, code);
+            try
+            {
+                var res = _api.InvoicesFiat(pFiat, pAmount, _appConfig?["Api:InvoicesUrl"] ?? "/v1/invoices"); ;
+                return Json(res);
+            }
+            catch (Exception exception)
+            {
+                if (exception.Message == "ErrorProcessingException")
+                {
+                    Console.WriteLine($"Request error! StatusCode: {(HttpStatusCode)exception.Data["StatusCode"]}; Message: {(string)exception.Data["MessageFromTheApiServer"]}");
+                    return new CustomJsonResult(new { Message = (string)exception.Data["MessageForClient"] }, (HttpStatusCode)exception.Data["StatusCode"]);
+                }
+                else if (exception.Message == "Set correct values")
+                    return new CustomJsonResult(new { Message = exception.Message }, HttpStatusCode.BadRequest);
+                else
+                {
+                    Console.WriteLine($"Unknown error! Message: {exception.Message}");
+                    return StatusCode(500);
+                }
+            }
         }
     }
 }
