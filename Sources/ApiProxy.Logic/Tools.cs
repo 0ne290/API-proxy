@@ -14,12 +14,11 @@ namespace ApiProxy.Logic
     public static class Tools
     {
         private static HttpClient _httpClient = new HttpClient();
-        private static object _locker = new object();
         /// <summary>
         /// Метод подробно логирует ошибки на консоль и выдает клиенту краткую
         /// информацию о ошибках
         /// </summary>
-        public static HttpStatusCode ErrorProcessing(HttpResponseMessage response, out string error)
+        public static void ErrorProcessing(HttpResponseMessage response)
         {
             int i;
             HttpStatusCode code = response.StatusCode;
@@ -30,63 +29,68 @@ namespace ApiProxy.Logic
                     break;
             if (i < 6)
             {
-                lock (_locker)
-                {
-                    Console.WriteLine($"!--ERROR--   Response code: {code}   --ERROR--!");
-                    Console.WriteLine($"!--ERROR--   Error description: {response.Content.ReadAsStringAsync().Result}   --ERROR--!");
-                }
+                Exception exception = new Exception("ErrorProcessingException");
+                exception.Data["StatusCode"] = code;
+                exception.Data["MessageForClient"] = messages[i];
+                exception.Data["MessageFromTheApiServer"] = response.Content.ReadAsStringAsync().Result;
+                throw exception;
             }
-            error = messages[i];
-            return code;
         }
         /// <summary>
         /// Метод отправляет запрос к API-серверу без тела и не получает ответ
         /// </summary>
-        public static void SendRequest(HttpMethod method, string url, out string error, string? accessToken, out HttpStatusCode code)
+        public static void SendRequest(HttpMethod method, string url, string? accessToken)
         {
             using var request = new HttpRequestMessage(method, url);
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            using var response = _httpClient.Send(request);
-            code = ErrorProcessing(response, out error);
+            try
+            {
+                using var response = _httpClient.Send(request);
+                ErrorProcessing(response);
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
         }
         /// <summary>
         /// Метод отправляет запрос к API-серверу без тела и получает ответ
         /// </summary>
-        public static T? SendRequest<T>(HttpMethod method, string url, out string error, string? accessToken, out HttpStatusCode code) where T : class
+        public static T? SendRequest<T>(HttpMethod method, string url, string? accessToken) where T : class
         {
             using var request = new HttpRequestMessage(method, url);
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            using var response = _httpClient.Send(request);
-            code = ErrorProcessing(response, out error);
             T? resJson;
             try
             {
+                using var response = _httpClient.Send(request);
+                ErrorProcessing(response);
                 resJson = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
             }
-            catch
+            catch (Exception exception)
             {
-                resJson = null;
+                throw exception;
             }
             return resJson;
         }
         /// <summary>
         /// Метод отправляет запрос к API-серверу с телом и получает ответ
         /// </summary>
-        public static T2? SendRequest<T1, T2>(T1? body, HttpMethod method, string url, out string error, string? accessToken, out HttpStatusCode code) where T1 : HttpContent where T2 : class
+        public static T2? SendRequest<T1, T2>(T1? body, HttpMethod method, string url, string? accessToken) where T1 : HttpContent where T2 : class
         {
             using var request = new HttpRequestMessage(method, url);
             request.Content = body;
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            using var response = _httpClient.Send(request);
-            code = ErrorProcessing(response, out error);
             T2? resJson;
             try
             {
+                using var response = _httpClient.Send(request);
+                ErrorProcessing(response);
                 resJson = JsonConvert.DeserializeObject<T2>(response.Content.ReadAsStringAsync().Result);
             }
-            catch
+            catch (Exception exception)
             {
-                resJson = null;
+                throw exception;
             }
             return resJson;
         }
