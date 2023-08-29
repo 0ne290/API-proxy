@@ -8,6 +8,29 @@ namespace ApiProxy.Logic.Models
     /// </summary>
     public class InvoiceResponse
     {
+        public static InvoiceResponse ToConvert(Invoice? invoice, string? callbackUrl)
+        {
+            return new InvoiceResponse
+            {
+                Id = invoice.Id,
+                Status = invoice.Status,
+                Type = invoice.Type,
+                CreatedAt = invoice.CreatedAt,
+                Amount = invoice.Amount,
+                Coin = invoice.Coin,
+                Fiat = invoice.Fiat,
+                FiatAmount = invoice.FiatAmount,
+                PaymentSystem = invoice.PaymentSystem,
+                LangId = invoice.LangId,
+                CountryCode = invoice.CountryCode,
+                RedirectUrl = invoice.RedirectUrl,
+                PaymentUrl = invoice.PaymentUrl,
+                Merchant = invoice.Merchant,
+                ExpiresAt = invoice.ExpiresAt,
+                CallbackUrl = callbackUrl
+            };
+        }
+
         [JsonProperty("id")]
         public string? Id { get; set; }
         [JsonProperty("status")]
@@ -42,17 +65,5 @@ namespace ApiProxy.Logic.Models
         public string? ExpiresAt { get; set; }
         [JsonProperty("fee")]
         public string? Fee { get; set; }
-        public static explicit operator InvoiceResponse(Invoice invoice)
-        {
-            return new InvoiceResponse()
-            {
-                Id = invoice.Id, Status = invoice.Status, Type = invoice.Type,
-                CreatedAt = invoice.CreatedAt, Amount = invoice.Amount, Coin = invoice.Coin,
-                Fiat = invoice.Fiat, FiatAmount = invoice.FiatAmount, PaymentSystem = invoice.PaymentSystem,
-                LangId = invoice.LangId, CountryCode = invoice.CountryCode, CallbackUrl = invoice.CallbackUrl,
-                RedirectUrl = invoice.RedirectUrl, PaymentUrl = invoice.PaymentUrl, Merchant = invoice.Merchant,
-                ExpiresAt = invoice.ExpiresAt
-            };
-        }
     }
 }
