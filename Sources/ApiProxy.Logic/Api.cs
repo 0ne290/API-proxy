@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Drawing;
+using System.Linq.Expressions;
 
 namespace ApiProxy.Logic
 {
@@ -22,36 +23,24 @@ namespace ApiProxy.Logic
 
         public List<Fiat>? Fiats(string fiatsUrl)
         {
-            try
-            {
-                var resUrl = $"{ApiUrl}{fiatsUrl}";
-                var res = Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, AccessToken);
-                return res;
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            var resUrl = $"{ApiUrl}{fiatsUrl}";
+            var res = Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, AccessToken);
+            return res;
         }
+
         /// <summary>
         /// Формируем счет на оплату в крипте
         /// </summary>
-        public InvoiceResponse InvoicesCryptocurrency(string? pCoin, int? pAmount, string invoicesUrl)
+        public InvoiceResponse InvoicesCryptocurrency(string? nameCoin, decimal? amount, string invoicesUrl)
         {
-            if (pCoin == null || pAmount == null)
+            if (string.IsNullOrEmpty(nameCoin) || amount == null)
                 throw new Exception("Set correct values");
-            try
-            {
-                var resUrl = $"{ApiUrl}{invoicesUrl}";
-                var body = new InvoiceCryptocurrencyCreate() { RedirectUrl = RedirectUrl, CallbackUrl = InnerCallbackInvoices + Id, Coin = pCoin, Amount = pAmount.ToString() };
-                var res = (InvoiceResponse)Tools.SendRequest<StringContent, Invoice>(new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"), HttpMethod.Post, resUrl, AccessToken);
-                res.CallbackUrl = CallbackUrl;
-                return res;
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            
+            var resUrl = $"{ApiUrl}{invoicesUrl}";
+            var body = new InvoiceCryptocurrencyCreate(RedirectUrl, $"{InnerCallbackInvoices}{Id}", nameCoin, $"{amount}");
+            var content = body.ToStringContent();
+            var invoice = Tools.SendRequest<StringContent, Invoice>(content, HttpMethod.Post, resUrl, AccessToken);
+            return InvoiceResponse.ToConvert(invoice, CallbackUrl);
         }
         /// <summary>
         /// Формируем счет на оплату в фиате
