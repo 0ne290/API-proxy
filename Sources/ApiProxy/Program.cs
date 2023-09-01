@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using static PublicApi.Models.DatabaseContext;
 using System.Text;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Serilog;
 
 namespace PublicApi
 {
@@ -11,6 +12,10 @@ namespace PublicApi
     {
         public static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File("logs/ApiProxy.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 3)
+                .CreateLogger();
+
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<MyDbContext>(options => options.UseMySql(builder.Configuration.GetConnectionString("MySql"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MySql"))), ServiceLifetime.Scoped, ServiceLifetime.Scoped);

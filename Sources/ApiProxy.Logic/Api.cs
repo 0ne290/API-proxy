@@ -6,61 +6,54 @@ using System.Net.Http;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Drawing;
 using System.Linq.Expressions;
+using ApiProxy.Logic.Database;
 
 namespace ApiProxy.Logic
 {
     public class Api
     {
-        public Api(string? apiUrl, string? innerCallbackInvoices, string? accessToken, string? redirectUrl, string? callbackUrl, string? id)
+        public Api(string apiUrl, string innerCallbackInvoices, string accessToken, string id, string connectionString)
         {
             ApiUrl = apiUrl;
             InnerCallbackInvoices = innerCallbackInvoices;
             AccessToken = accessToken;
-            RedirectUrl = redirectUrl;
-            CallbackUrl = callbackUrl;
             Id = id;
+
+            MyDbContext db = MyDbContext.GetMyDbContext(connectionString);
+            Database.Merchant? merchant = db.Merchants.Find(id);
+            db.Dispose();
+            RedirectUrl = merchant.MerchantRedirectUrl;
+            CallbackUrl = merchant.MerchantCallbackUrl;
         }
 
         public List<Fiat>? Fiats(string fiatsUrl)
         {
             var resUrl = $"{ApiUrl}{fiatsUrl}";
-            var res = Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, AccessToken);
-            return res;
+            return Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, AccessToken); 
         }
 
-        /// <summary>
-        /// Формируем счет на оплату в крипте
-        /// </summary>
         public InvoiceResponse InvoicesCryptocurrency(string? nameCoin, decimal? amount, string invoicesUrl)
         {
             if (string.IsNullOrEmpty(nameCoin) || amount == null)
                 throw new Exception("Set correct values");
-            
+
             var resUrl = $"{ApiUrl}{invoicesUrl}";
             var body = new InvoiceCryptocurrencyCreate(RedirectUrl, $"{InnerCallbackInvoices}{Id}", nameCoin, $"{amount}");
             var content = body.ToStringContent();
-            var invoice = Tools.SendRequest<StringContent, Invoice>(content, HttpMethod.Post, resUrl, AccessToken);
+            var invoice = Tools.SendRequest<StringContent, Models.Invoice>(content, HttpMethod.Post, resUrl, AccessToken);
             return InvoiceResponse.ToConvert(invoice, CallbackUrl);
         }
-        /// <summary>
-        /// Формируем счет на оплату в фиате
-        /// </summary>
-        public InvoiceResponse InvoicesFiat(string? pFiat, int? pAmount, string invoicesUrl)
+
+        public InvoiceResponse InvoicesFiat(string? nameFiat, decimal? amount, string invoicesUrl)
         {
-            if (pFiat == null || pAmount == null)
+            if (string.IsNullOrEmpty(nameFiat) || amount == null)
                 throw new Exception("Set correct values");
-            try
-            {
-                var resUrl = $"{ApiUrl}{invoicesUrl}";
-                var body = new InvoiceFiatCreate() { RedirectUrl = RedirectUrl, CallbackUrl = InnerCallbackInvoices + Id, Fiat = pFiat, FiatAmount = pAmount.ToString() };
-                var res = (InvoiceResponse)Tools.SendRequest<StringContent, Invoice>(new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"), HttpMethod.Post, resUrl, AccessToken);
-                res.CallbackUrl = CallbackUrl;
-                return res;
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+
+            var resUrl = $"{ApiUrl}{invoicesUrl}";
+            var body = new InvoiceFiatCreate(RedirectUrl, $"{InnerCallbackInvoices}{Id}", nameFiat, $"{amount}");
+            var content = body.ToStringContent();
+            var invoice = Tools.SendRequest<StringContent, Models.Invoice>(content, HttpMethod.Post, resUrl, AccessToken);
+            return InvoiceResponse.ToConvert(invoice, CallbackUrl);
         }
 
         public string? ApiUrl { get; set; }
