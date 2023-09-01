@@ -8,16 +8,14 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
+using ApiProxy.Logic.Database;
 
 namespace ApiProxy.Logic
 {
     public static class Tools
     {
         private static HttpClient _httpClient = new HttpClient();
-        /// <summary>
-        /// Метод подробно логирует ошибки на консоль и выдает клиенту краткую
-        /// информацию о ошибках
-        /// </summary>
+
         public static void ErrorProcessing(HttpResponseMessage response)
         {
             int i;
@@ -36,9 +34,6 @@ namespace ApiProxy.Logic
                 throw exception;
             }
         }
-        /// <summary>
-        /// Метод отправляет запрос к API-серверу без тела и не получает ответ
-        /// </summary>
         public static void SendRequest(HttpMethod method, string url, string? accessToken)
         {
             using var request = new HttpRequestMessage(method, url);
@@ -53,9 +48,6 @@ namespace ApiProxy.Logic
                 throw exception;
             }
         }
-        /// <summary>
-        /// Метод отправляет запрос к API-серверу без тела и получает ответ
-        /// </summary>
         public static T? SendRequest<T>(HttpMethod method, string url, string? accessToken) where T : class
         {
             using var request = new HttpRequestMessage(method, url);
@@ -73,9 +65,6 @@ namespace ApiProxy.Logic
             }
             return resJson;
         }
-        /// <summary>
-        /// Метод отправляет запрос к API-серверу с телом и получает ответ
-        /// </summary>
         public static T2? SendRequest<T1, T2>(T1? body, HttpMethod method, string url, string? accessToken) where T1 : HttpContent where T2 : class
         {
             using var request = new HttpRequestMessage(method, url);
@@ -94,9 +83,6 @@ namespace ApiProxy.Logic
             }
             return resJson;
         }
-        /// <summary>
-        /// Метод возвращает Sha256-хеш строки
-        /// </summary>
         public static string ComputeSha256Hash(string rawData)
         {
             using (SHA256 sha256Hash = SHA256.Create())
@@ -128,6 +114,13 @@ namespace ApiProxy.Logic
                 response = httpClient.Send(request);
             }
             response.Dispose();
+        }
+        public static Database.Merchant? FindMerchant(MyDbContext db, string login, string password)
+        {
+            List<Database.Merchant> merchants = db.Merchants.AsNoTracking().ToList();
+            if (merchants == null)
+                return null;
+            return merchants.FirstOrDefault(m => ComputeSha256Hash(login + m.MerchantGuid + m.MerchantDate) == m.MerchantLogin && ComputeSha256Hash(password + m.MerchantGuid + m.MerchantDate) == m.MerchantPassword);
         }
     }
 }
