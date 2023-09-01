@@ -8,16 +8,14 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
+using ApiProxy.Logic.Database;
 
 namespace ApiProxy.Logic
 {
     public static class Tools
     {
         private static HttpClient _httpClient = new HttpClient();
-        /// <summary>
-        /// Метод подробно логирует ошибки на консоль и выдает клиенту краткую
-        /// информацию о ошибках
-        /// </summary>
+
         public static void ErrorProcessing(HttpResponseMessage response)
         {
             int i;
@@ -36,67 +34,32 @@ namespace ApiProxy.Logic
                 throw exception;
             }
         }
-        /// <summary>
-        /// Метод отправляет запрос к API-серверу без тела и не получает ответ
-        /// </summary>
         public static void SendRequest(HttpMethod method, string url, string? accessToken)
         {
             using var request = new HttpRequestMessage(method, url);
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            try
-            {
-                using var response = _httpClient.Send(request);
-                ErrorProcessing(response);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            using var response = _httpClient.Send(request);
+            ErrorProcessing(response);
         }
-        /// <summary>
-        /// Метод отправляет запрос к API-серверу без тела и получает ответ
-        /// </summary>
         public static T? SendRequest<T>(HttpMethod method, string url, string? accessToken) where T : class
         {
             using var request = new HttpRequestMessage(method, url);
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            T? resJson;
-            try
-            {
-                using var response = _httpClient.Send(request);
-                ErrorProcessing(response);
-                resJson = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            using var response = _httpClient.Send(request);
+            ErrorProcessing(response);
+            var resJson = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
             return resJson;
         }
-        /// <summary>
-        /// Метод отправляет запрос к API-серверу с телом и получает ответ
-        /// </summary>
         public static T2? SendRequest<T1, T2>(T1? body, HttpMethod method, string url, string? accessToken) where T1 : HttpContent where T2 : class
         {
             using var request = new HttpRequestMessage(method, url);
             request.Content = body;
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            T2? resJson;
-            try
-            {
-                using var response = _httpClient.Send(request);
-                ErrorProcessing(response);
-                resJson = JsonConvert.DeserializeObject<T2>(response.Content.ReadAsStringAsync().Result);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            using var response = _httpClient.Send(request);
+            ErrorProcessing(response);
+            var resJson = JsonConvert.DeserializeObject<T2>(response.Content.ReadAsStringAsync().Result);
             return resJson;
         }
-        /// <summary>
-        /// Метод возвращает Sha256-хеш строки
-        /// </summary>
         public static string ComputeSha256Hash(string rawData)
         {
             using (SHA256 sha256Hash = SHA256.Create())
@@ -110,24 +73,13 @@ namespace ApiProxy.Logic
                 return builder.ToString();
             }
         }
-        public static void SendCallback<T>(object args)
+
+        public static Database.Merchant? FindMerchant(MyDbContext db, string login, string password)
         {
-            object[] argList = (object[])args;
-            HttpClient httpClient = (HttpClient)argList[2];
-            int i = 0;
-            using var request = new HttpRequestMessage(HttpMethod.Post, (string)argList[1]);
-            request.Headers.Remove("Accept");
-            request.Headers.Add("Accept", "application/json");
-            request.Content = new StringContent(JsonConvert.SerializeObject((T)argList[0]), Encoding.UTF8, "application/json");
-            var response = httpClient.Send(request);
-            while (i < 12 && response.StatusCode != HttpStatusCode.OK)
-            {
-                response.Dispose();
-                Thread.Sleep(300000);
-                i++;
-                response = httpClient.Send(request);
-            }
-            response.Dispose();
+            List<Database.Merchant> merchants = db.Merchants.AsNoTracking().ToList();
+            if (merchants == null)
+                return null;
+            return merchants.FirstOrDefault(m => ComputeSha256Hash(login + m.MerchantGuid + m.MerchantDate) == m.MerchantLogin && ComputeSha256Hash(password + m.MerchantGuid + m.MerchantDate) == m.MerchantPassword);
         }
     }
 }
