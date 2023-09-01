@@ -38,31 +38,16 @@ namespace ApiProxy.Logic
         {
             using var request = new HttpRequestMessage(method, url);
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            try
-            {
-                using var response = _httpClient.Send(request);
-                ErrorProcessing(response);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            using var response = _httpClient.Send(request);
+            ErrorProcessing(response);
         }
         public static T? SendRequest<T>(HttpMethod method, string url, string? accessToken) where T : class
         {
             using var request = new HttpRequestMessage(method, url);
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            T? resJson;
-            try
-            {
-                using var response = _httpClient.Send(request);
-                ErrorProcessing(response);
-                resJson = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            using var response = _httpClient.Send(request);
+            ErrorProcessing(response);
+            var resJson = JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
             return resJson;
         }
         public static T2? SendRequest<T1, T2>(T1? body, HttpMethod method, string url, string? accessToken) where T1 : HttpContent where T2 : class
@@ -70,17 +55,9 @@ namespace ApiProxy.Logic
             using var request = new HttpRequestMessage(method, url);
             request.Content = body;
             request.Headers.Add("Authorization", "Bearer " + accessToken);
-            T2? resJson;
-            try
-            {
-                using var response = _httpClient.Send(request);
-                ErrorProcessing(response);
-                resJson = JsonConvert.DeserializeObject<T2>(response.Content.ReadAsStringAsync().Result);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            using var response = _httpClient.Send(request);
+            ErrorProcessing(response);
+            var resJson = JsonConvert.DeserializeObject<T2>(response.Content.ReadAsStringAsync().Result);
             return resJson;
         }
         public static string ComputeSha256Hash(string rawData)
@@ -96,25 +73,7 @@ namespace ApiProxy.Logic
                 return builder.ToString();
             }
         }
-        public static void SendCallback<T>(object args)
-        {
-            object[] argList = (object[])args;
-            HttpClient httpClient = (HttpClient)argList[2];
-            int i = 0;
-            using var request = new HttpRequestMessage(HttpMethod.Post, (string)argList[1]);
-            request.Headers.Remove("Accept");
-            request.Headers.Add("Accept", "application/json");
-            request.Content = new StringContent(JsonConvert.SerializeObject((T)argList[0]), Encoding.UTF8, "application/json");
-            var response = httpClient.Send(request);
-            while (i < 12 && response.StatusCode != HttpStatusCode.OK)
-            {
-                response.Dispose();
-                Thread.Sleep(300000);
-                i++;
-                response = httpClient.Send(request);
-            }
-            response.Dispose();
-        }
+
         public static Database.Merchant? FindMerchant(MyDbContext db, string login, string password)
         {
             List<Database.Merchant> merchants = db.Merchants.AsNoTracking().ToList();

@@ -28,53 +28,32 @@ namespace ApiProxy.Logic
 
         public List<Fiat>? Fiats(string fiatsUrl)
         {
-			try
-            {
-				var resUrl = $"{ApiUrl}{fiatsUrl}";
-                return Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, AccessToken);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+            var resUrl = $"{ApiUrl}{fiatsUrl}";
+            return Tools.SendRequest<List<Fiat>>(HttpMethod.Get, resUrl, AccessToken); 
         }
 
         public InvoiceResponse InvoicesCryptocurrency(string? nameCoin, decimal? amount, string invoicesUrl)
         {
             if (string.IsNullOrEmpty(nameCoin) || amount == null)
                 throw new Exception("Set correct values");
-            
-			try
-            {
-                var resUrl = $"{ApiUrl}{invoicesUrl}";
-				var body = new InvoiceCryptocurrencyCreate(RedirectUrl, $"{InnerCallbackInvoices}{Id}", nameCoin, $"{amount}");
-				var content = body.ToStringContent();
-				var invoice = Tools.SendRequest<StringContent, Models.Invoice>(content, HttpMethod.Post, resUrl, AccessToken);
-				return InvoiceResponse.ToConvert(invoice, CallbackUrl);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+
+            var resUrl = $"{ApiUrl}{invoicesUrl}";
+            var body = new InvoiceCryptocurrencyCreate(RedirectUrl, $"{InnerCallbackInvoices}{Id}", nameCoin, $"{amount}");
+            var content = body.ToStringContent();
+            var invoice = Tools.SendRequest<StringContent, Models.Invoice>(content, HttpMethod.Post, resUrl, AccessToken);
+            return InvoiceResponse.ToConvert(invoice, CallbackUrl);
         }
 
         public InvoiceResponse InvoicesFiat(string? nameFiat, decimal? amount, string invoicesUrl)
         {
             if (string.IsNullOrEmpty(nameFiat) || amount == null)
                 throw new Exception("Set correct values");
-			
-            try
-            {
-                var resUrl = $"{ApiUrl}{invoicesUrl}";
-                var body = new InvoiceFiatCreate(RedirectUrl, $"{InnerCallbackInvoices}{Id}", nameFiat, $"{amount}");
-                var content = body.ToStringContent();
-				var invoice = Tools.SendRequest<StringContent, Models.Invoice>(content, HttpMethod.Post, resUrl, AccessToken);
-				return InvoiceResponse.ToConvert(invoice, CallbackUrl);
-            }
-            catch (Exception exception)
-            {
-                throw exception;
-            }
+
+            var resUrl = $"{ApiUrl}{invoicesUrl}";
+            var body = new InvoiceFiatCreate(RedirectUrl, $"{InnerCallbackInvoices}{Id}", nameFiat, $"{amount}");
+            var content = body.ToStringContent();
+            var invoice = Tools.SendRequest<StringContent, Models.Invoice>(content, HttpMethod.Post, resUrl, AccessToken);
+            return InvoiceResponse.ToConvert(invoice, CallbackUrl);
         }
 
         public string? ApiUrl { get; set; }
