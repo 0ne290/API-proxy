@@ -1,5 +1,4 @@
 ﻿using ApiProxy.Logic.Refactoring.Logic;
-using Tests.AAAPattern.xUnit.Refactoring.Logic;
 
 namespace ApiProxy.Logic.Refactoring;
 
