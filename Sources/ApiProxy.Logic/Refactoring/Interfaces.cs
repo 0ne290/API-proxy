@@ -5,7 +5,7 @@ namespace ApiProxy.Logic.Refactoring;
 public interface IContainer
 {
     IContainer Add<TInterface, TImplementation>(TImplementation implementation) where TImplementation: TInterface;
-    TInterface Resolve<TInterface>();
+    TInterface? Resolve<TInterface>();
 }
 
 public interface IMobileStore
@@ -15,7 +15,7 @@ public interface IMobileStore
 
 public interface IPhoneReader
 {
-    string[] GetInputData();
+    string?[] GetInputData();
 }
 
 public interface IPhoneBinder
