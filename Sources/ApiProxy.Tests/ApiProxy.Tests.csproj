@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Project.Kernel" Version="6.0.1.6" />
+    <PackageReference Include="Tests.AAAPattern.xUnit" Version="6.0.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApiProxy.Logic\ApiProxy.Logic.csproj" />
+  </ItemGroup>
+
+</Project>
