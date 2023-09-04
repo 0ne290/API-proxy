@@ -7,7 +7,7 @@ public class MobileStore: IMobileStore
     public MobileStore(IContainer container)
     {
         Container = container;
-        Phones = new List<Phone?>();
+        Phones = new List<Phone>();
     }
 
     public void Process()
@@ -18,22 +18,22 @@ public class MobileStore: IMobileStore
         var validator = Container.Resolve<IPhoneValidator>();
         var saver = Container.Resolve<IPhoneSaver>();
 
-        var data = reader!.GetInputData();
-        var phone = binder!.CreatePhone(data!);
+        var data = reader.GetInputData();
+        var phone = binder.CreatePhone(data!);
         
-        if (validator!.IsValid(phone!))
+        if (validator.IsValid(phone))
         {
             Console.WriteLine("Некорректные данные");
             return;
         }
 
         Phones.Add(phone);
-        saver!.Save(phone!, "store.txt");
+        saver.Save(phone, "store.txt");
         
         Console.WriteLine("Данные успешно обработаны");
     }
 
-    private List<Phone?> Phones { get; }
+    private List<Phone> Phones { get; }
     private IContainer Container { get; }
 
 }
