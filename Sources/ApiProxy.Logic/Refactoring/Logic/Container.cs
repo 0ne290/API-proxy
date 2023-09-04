@@ -10,7 +10,7 @@ public class Container: IContainer
         };
     }
 
-    public IContainer Add<TInterface, TImplementation>(TImplementation? implementation) where TImplementation : TInterface
+    public IContainer Add<TInterface, TImplementation>(TImplementation implementation) where TImplementation : TInterface
     {
         Store[typeof(TInterface)] = implementation!;
         return this;
