@@ -8,10 +8,10 @@ public class RegistratorTypes
     {
         var container = ServiceLocator.GetInstance();
 
-        container.Add<IPhoneReader, ConsolePhoneReader>()
-            .Add<IPhoneBinder, GeneralPhoneBinder>()
-            .Add<IPhoneValidator, GeneralPhoneValidator>()
-            .Add<IPhoneSaver, TextPhoneSaver>()
-            .Add<IMobileStore, MobileStore>(new MobileStore(container));
+        container.AddSingleton<IPhoneReader>(() => new ConsolePhoneReader())
+            .AddSingleton<IPhoneBinder>(() => new GeneralPhoneBinder())
+            .AddSingleton<IPhoneValidator>(() => new GeneralPhoneValidator())
+            .AddSingleton<IPhoneSaver>(() => new TextPhoneSaver())
+            .AddSingleton<IMobileStore>(serviceLocator => new MobileStore(serviceLocator));
     }
 }
