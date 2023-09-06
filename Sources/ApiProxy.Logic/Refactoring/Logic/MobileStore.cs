@@ -4,19 +4,18 @@ namespace ApiProxy.Logic.Refactoring.Logic;
 
 public class MobileStore: IMobileStore
 {
-    public MobileStore(IContainer container)
+    public MobileStore(IServiceLocator serviceLocator)
     {
-        Container = container;
+        ServiceLocator = serviceLocator;
         Phones = new List<Phone>();
     }
 
     public void Process()
     {
-
-        var reader = Container.Resolve<IPhoneReader>();
-        var binder = Container.Resolve<IPhoneBinder>();
-        var validator = Container.Resolve<IPhoneValidator>();
-        var saver = Container.Resolve<IPhoneSaver>();
+        var reader = ServiceLocator.Resolve<IPhoneReader>();
+        var binder = ServiceLocator.Resolve<IPhoneBinder>();
+        var validator = ServiceLocator.Resolve<IPhoneValidator>();
+        var saver = ServiceLocator.Resolve<IPhoneSaver>();
 
         var data = reader.GetInputData();
         var phone = binder.CreatePhone(data!);
@@ -34,6 +33,6 @@ public class MobileStore: IMobileStore
     }
 
     private List<Phone> Phones { get; }
-    private IContainer Container { get; }
+    private IServiceLocator ServiceLocator { get; }
 
 }
