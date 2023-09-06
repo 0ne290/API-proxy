@@ -4,14 +4,12 @@ namespace ApiProxy.Logic.Refactoring;
 
 public class RegistratorTypes
 {
-    public void RegisterAllTypes()
+    public void RegisterAllTypes(IServiceLocator serviceLocator)
     {
-        var container = ServiceLocator.GetInstance();
-
-        container.AddSingleton<IPhoneReader>(() => new ConsolePhoneReader())
+        serviceLocator.AddSingleton<IPhoneReader>(() => new ConsolePhoneReader())
             .AddSingleton<IPhoneBinder>(() => new GeneralPhoneBinder())
             .AddSingleton<IPhoneValidator>(() => new GeneralPhoneValidator())
             .AddSingleton<IPhoneSaver>(() => new TextPhoneSaver())
-            .AddSingleton<IMobileStore>(serviceLocator => new MobileStore(serviceLocator));
+            .AddSingleton<IMobileStore>(sl => new MobileStore(sl));
     }
 }
