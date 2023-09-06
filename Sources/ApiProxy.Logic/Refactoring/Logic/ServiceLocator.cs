@@ -1,14 +1,16 @@
-﻿namespace ApiProxy.Logic.Refactoring.Logic;
+﻿using System.Collections.Concurrent;
+
+namespace ApiProxy.Logic.Refactoring.Logic;
 
 public class ServiceLocator : IServiceLocator
 {
-    private ServiceLocator() => Store = new Dictionary<Type, Dictionary<string, object>>
+    private ServiceLocator() => Store = new ConcurrentDictionary<Type, ConcurrentDictionary<string, object>>
         { [typeof(IServiceLocator)] = new() { [""] = this } };
 
     public IServiceLocator Add<TInterface, TImplementation>(string key="") where TImplementation : TInterface, new()
     {
         if (!Store.ContainsKey(typeof(TInterface)))
-            Store[typeof(TInterface)] = new Dictionary<string, object>();
+            Store[typeof(TInterface)] = new ConcurrentDictionary<string, object>();
         Store[typeof(TInterface)][key] = new Lazy<TInterface>(new TImplementation());
         return this;
     }
@@ -16,7 +18,7 @@ public class ServiceLocator : IServiceLocator
     public IServiceLocator Add<TInterface, TImplementation>(TImplementation implementation, string key="") where TImplementation : TInterface
     {
         if (!Store.ContainsKey(typeof(TInterface)))
-            Store[typeof(TInterface)] = new Dictionary<string, object>();
+            Store[typeof(TInterface)] = new ConcurrentDictionary<string, object>();
         Store[typeof(TInterface)][key] = implementation!;
         return this;
     }
@@ -30,6 +32,6 @@ public class ServiceLocator : IServiceLocator
 
     public static IServiceLocator GetInstance() => Lazy.Value;
 
-    private static readonly Lazy<ServiceLocator> Lazy = new(new ServiceLocator());
-    private Dictionary<Type, Dictionary<string, object>> Store { get; }
+    private static readonly Lazy<ServiceLocator> Lazy = new(() => new ServiceLocator(), true);
+    private ConcurrentDictionary<Type, ConcurrentDictionary<string, object>> Store { get; }
 }
