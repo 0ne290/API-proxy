@@ -4,8 +4,10 @@ namespace ApiProxy.Logic.Refactoring;
 
 public interface IServiceLocator
 {
-    IServiceLocator Add<TInterface, TImplementation>(string key = "") where TImplementation : TInterface, new();
-    IServiceLocator Add<TInterface, TImplementation>(TImplementation implementation, string key = "") where TImplementation : TInterface;
+    IServiceLocator Add<TInterface>(Func<IServiceLocator, TInterface> functor, string key = "");
+    IServiceLocator Add<TInterface>(Func<TInterface> functor, string key = "");
+    IServiceLocator AddSingleton<TInterface>(Func<IServiceLocator, TInterface> functor, string key = "");
+    IServiceLocator AddSingleton<TInterface>(Func<TInterface> functor, string key = "");
     TInterface Resolve<TInterface>(string key = "");
 }
 
