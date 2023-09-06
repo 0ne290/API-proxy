@@ -4,9 +4,9 @@ namespace ApiProxy.Logic.Refactoring;
 
 public interface IServiceLocator
 {
-    IServiceLocator Add<TInterface, TImplementation>() where TImplementation : TInterface, new();
-    IServiceLocator Add<TInterface, TImplementation>(TImplementation implementation) where TImplementation : TInterface;
-    TInterface Resolve<TInterface>();
+    IServiceLocator Add<TInterface, TImplementation>(string key = "") where TImplementation : TInterface, new();
+    IServiceLocator Add<TInterface, TImplementation>(TImplementation implementation, string key = "") where TImplementation : TInterface;
+    TInterface Resolve<TInterface>(string key = "");
 }
 
 public interface IMobileStore
