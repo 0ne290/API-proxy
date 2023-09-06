@@ -39,27 +39,12 @@ public class ServiceLocator : IServiceLocator
         return this;
     }
 
-    public TInterface Resolve<TInterface>(string key="")
+    public TInterface Resolve<TInterface>(string key = "") => Store[typeof(TInterface)][key] switch
     {
-        switch (Store[typeof(TInterface)][key])
-        {
-            case Func<TInterface>:
-            {
-                var functor = (Func<TInterface>)Store[typeof(TInterface)][key];
-                return functor();
-            }
-            case Func<IServiceLocator, TInterface>:
-            {
-                var functor = (Func<IServiceLocator, TInterface>)Store[typeof(TInterface)][key];
-                return functor(this);
-            }
-            default:
-            {
-                var lazy = (Lazy<TInterface>)Store[typeof(TInterface)][key];
-                return lazy.Value;
-            }
-        }
-    }
+        Func<TInterface> => ((Func<TInterface>)Store[typeof(TInterface)][key])(),
+        Func<IServiceLocator, TInterface> => ((Func<IServiceLocator, TInterface>)Store[typeof(TInterface)][key])(this),
+        _ => ((Lazy<TInterface>)Store[typeof(TInterface)][key]).Value
+    };
 
     public static IServiceLocator GetInstance() => Lazy.Value;
 
