@@ -2,9 +2,10 @@
 
 namespace ApiProxy.Logic.Refactoring;
 
-public interface IContainer
+public interface IServiceLocator
 {
-    IContainer Add<TInterface, TImplementation>(TImplementation implementation) where TImplementation: TInterface;
+    IServiceLocator Add<TInterface, TImplementation>() where TImplementation : TInterface, new();
+    IServiceLocator Add<TInterface, TImplementation>(TImplementation implementation) where TImplementation : TInterface;
     TInterface Resolve<TInterface>();
 }
 
