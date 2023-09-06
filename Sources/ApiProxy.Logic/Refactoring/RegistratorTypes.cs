@@ -6,12 +6,12 @@ public class RegistratorTypes
 {
     public void RegisterAllTypes()
     {
-        var container = Container.GetInstance();
+        var container = ServiceLocator.GetInstance();
 
-        container.Add<IPhoneReader, ConsolePhoneReader>(new ConsolePhoneReader())
-            .Add<IPhoneBinder, GeneralPhoneBinder>(new GeneralPhoneBinder())
-            .Add<IPhoneValidator, GeneralPhoneValidator>(new GeneralPhoneValidator())
-            .Add<IPhoneSaver, TextPhoneSaver>(new TextPhoneSaver())
+        container.Add<IPhoneReader, ConsolePhoneReader>()
+            .Add<IPhoneBinder, GeneralPhoneBinder>()
+            .Add<IPhoneValidator, GeneralPhoneValidator>()
+            .Add<IPhoneSaver, TextPhoneSaver>()
             .Add<IMobileStore, MobileStore>(new MobileStore(container));
     }
 }
