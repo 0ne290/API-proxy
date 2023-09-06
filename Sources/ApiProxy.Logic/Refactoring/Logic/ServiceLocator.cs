@@ -2,29 +2,34 @@
 
 public class ServiceLocator : IServiceLocator
 {
-    private ServiceLocator() => Store = new Dictionary<Type, object> { [typeof(IServiceLocator)] = this };
+    private ServiceLocator() => Store = new Dictionary<Type, Dictionary<string, object>>
+        { [typeof(IServiceLocator)] = new() { [""] = this } };
 
-    public IServiceLocator Add<TInterface, TImplementation>() where TImplementation : TInterface, new()
+    public IServiceLocator Add<TInterface, TImplementation>(string key="") where TImplementation : TInterface, new()
     {
-        Store[typeof(TInterface)] = new Lazy<TInterface>(new TImplementation());
+        if (!Store.ContainsKey(typeof(TInterface)))
+            Store[typeof(TInterface)] = new Dictionary<string, object>();
+        Store[typeof(TInterface)][key] = new Lazy<TInterface>(new TImplementation());
         return this;
     }
 
-    public IServiceLocator Add<TInterface, TImplementation>(TImplementation implementation) where TImplementation : TInterface
+    public IServiceLocator Add<TInterface, TImplementation>(TImplementation implementation, string key="") where TImplementation : TInterface
     {
-        Store[typeof(TInterface)] = implementation!;
+        if (!Store.ContainsKey(typeof(TInterface)))
+            Store[typeof(TInterface)] = new Dictionary<string, object>();
+        Store[typeof(TInterface)][key] = implementation!;
         return this;
     }
 
-    public TInterface Resolve<TInterface>()
+    public TInterface Resolve<TInterface>(string key="")
     {
-        if (Store[typeof(TInterface)].GetType()==typeof(Lazy<TInterface>))
-            return ((Lazy<TInterface>)Store[typeof(TInterface)]).Value;
-        return (TInterface)Store[typeof(TInterface)];
+        if (Store[typeof(TInterface)][key].GetType()==typeof(Lazy<TInterface>))
+            return ((Lazy<TInterface>)Store[typeof(TInterface)][key]).Value;
+        return (TInterface)Store[typeof(TInterface)][key];
     }
 
     public static IServiceLocator GetInstance() => Lazy.Value;
 
     private static readonly Lazy<ServiceLocator> Lazy = new(new ServiceLocator());
-    private Dictionary<Type, object> Store { get; }
+    private Dictionary<Type, Dictionary<string, object>> Store { get; }
 }
