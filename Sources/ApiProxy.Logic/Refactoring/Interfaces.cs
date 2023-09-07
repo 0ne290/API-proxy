@@ -2,7 +2,7 @@
 
 namespace ApiProxy.Logic.Refactoring;
 
-public interface IServiceLocator
+public interface IServiceLocator:IDisposable
 {
     IServiceLocator Add<TInterface>(Func<IServiceLocator, TInterface> functor, string key = "");
     IServiceLocator Add<TInterface>(Func<TInterface> functor, string key = "");
