@@ -20,7 +20,7 @@ public class MobileStore: IMobileStore
         var data = reader.GetInputData();
         var phone = binder.CreatePhone(data!);
         
-        if (validator.IsValid(phone))
+        if (!validator.IsValid(phone))
         {
             Console.WriteLine("Некорректные данные");
             return;
