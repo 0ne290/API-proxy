@@ -8,11 +8,11 @@ public class NewCode
     {
         var primesSettings = new PrimesSettings();
 
-        var primeNumberGenerator = new PrimeNumberGenerator(primesSettings);
+        var primeNumberGenerator = new PrimeNumberGenerator();
         var printPrimes = new PrintPrimes(primesSettings);
 
-        primeNumberGenerator.Init();
-        var p = primeNumberGenerator.Calc();
+        primeNumberGenerator.Init(primesSettings.OrdMax, primesSettings.M);
+        var p = primeNumberGenerator.Calc(primesSettings.M);
         printPrimes.Print(p);
     }
 }
