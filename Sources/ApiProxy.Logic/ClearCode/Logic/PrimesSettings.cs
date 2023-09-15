@@ -4,42 +4,37 @@ public class PrimesSettings
 {
     public PrimesSettings()
     {
+        OrdMax = OrdMaxVal;
+        M = MVal;
+
         J = 1;
         K = 1;
-        ORD = 2;
-        SQUARE = 9;
+        Ord = 2;
+        Square = 9;
     }
 
     public void InitPageNumber()
     {
-        PAGENUMBER = 1;
+        PageNumber = 1;
     }
     public void InitPageOffset()
     {
-        PAGENUMBER = 1;
+        PageNumber = 1;
     }
 
-    public void InitN()
-    {
-        N = 2;
-    }
 
-    public void InitJPrime()
-    {
-        JPRIME = true;
-    }
 
-    public bool JPRIME;
-    public int N;
-    public int J;
-    public int K;
-    public int ORD;
-    public int SQUARE;
-    public int PAGENUMBER;
-    public int PAGEOFFSET;
+    public int OrdMax { get; set; }
+    public int M { get; set; }
+    public int J { get; set; }
+    public int K { get; set; }
+    public int Ord { get; set; }
+    public int Square { get; set; }
+    public int PageNumber { get; set; }
+    public int PageOffset { get; set; }
 
-    public const int M = 1000;
-    public const int RR = 50;
-    public const int CC = 4;
-    public const int ORDMAX = 30;
+    public static int MVal = 1000;
+    public const int Rr = 50;
+    public const int Cc = 4;
+    public static int OrdMaxVal = 30;
 }

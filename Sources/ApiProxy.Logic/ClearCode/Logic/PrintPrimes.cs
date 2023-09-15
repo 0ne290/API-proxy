@@ -2,60 +2,32 @@
 
 public class PrintPrimes
 {
-    public PrintPrimes(PrimesSettings settings, PrimesData data)
+    public PrintPrimes(PrimesSettings settings)
     {
         Settings = settings;
-        Data = data;
     }
 
-    public void Print()
+    public void Print(int[] p)
     {
-        while (Settings.K < PrimesSettings.M)
-        {
-            do
-            {
-                Settings.J += 2;
-                if (Settings.J == Settings.SQUARE)
-                {
-                    Settings.ORD++;
-                    Settings.SQUARE = Data.P[Settings.ORD] * Data.P[Settings.ORD];
-                    Data.MULT[Settings.ORD - 1] = Settings.J;
-                }
-                Settings.InitN();
-                Settings.InitJPrime();
-                while (Settings.N < Settings.ORD && Settings.JPRIME)
-                {
-                    while (Data.MULT[Settings.N] < Settings.J)
-                        Data.MULT[Settings.N] = Data.MULT[Settings.N] + Data.P[Settings.N] + Data.P[Settings.N];
-                    if (Data.MULT[Settings.N] == Settings.J)
-                        Settings.JPRIME = false;
-                    Settings.N += 1;
-                }
-            } while (!Settings.JPRIME);
-            Settings.K++;
-            Data.P[Settings.K] = Settings.J;
-        }
-
         Settings.InitPageNumber();
         Settings.InitPageOffset();
-        while (Settings.PAGEOFFSET <= PrimesSettings.M)
+        while (Settings.PageOffset <= Settings.M)
         {
-            Console.WriteLine("The First " + PrimesSettings.M + " Prime Numbers --- Page " + Settings.PAGENUMBER);
+            Console.WriteLine("The First " + Settings.M + " Prime Numbers --- Page " + Settings.PageNumber);
             Console.WriteLine("");
-            for (var ROWOFFSET = Settings.PAGEOFFSET; ROWOFFSET < Settings.PAGEOFFSET + PrimesSettings.RR; ROWOFFSET++)
+            for (var rowOffset = Settings.PageOffset; rowOffset < Settings.PageOffset + PrimesSettings.Rr; rowOffset++)
             {
-                for (var C = 0; C < PrimesSettings.CC; C++)
-                    if (ROWOFFSET + C * PrimesSettings.RR <= PrimesSettings.M)
-                        Console.WriteLine($"{Data.P[ROWOFFSET + C * PrimesSettings.RR]:d10}");
+                for (var c = 0; c < PrimesSettings.Cc; c++)
+                    if (rowOffset + c * PrimesSettings.Rr <= Settings.M)
+                        Console.WriteLine($"{p[rowOffset + c * PrimesSettings.Rr]:d10}");
                 Console.WriteLine("");
             }
             Console.WriteLine("\f");
-            Settings.PAGENUMBER++;
-            Settings.PAGEOFFSET += PrimesSettings.RR * PrimesSettings.CC;
+            Settings.PageNumber++;
+            Settings.PageOffset += PrimesSettings.Rr * PrimesSettings.Cc;
         }
     }
 
-    PrimesData Data { get; }
     PrimesSettings Settings { get; }
 
 }

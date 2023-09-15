@@ -34,11 +34,11 @@ public class FirstTest
         //Arrange
         var phoneData = new[] { modelPhone.Model, $"{modelPhone.Price}" };
         
-        serviceLocator.Setup(e => e.Resolve<IPhoneReader>(string.Empty)).Returns(phoneReader.Object);
-        serviceLocator.Setup(e => e.Resolve<IPhoneBinder>(string.Empty)).Returns(phoneBinder.Object);
-        serviceLocator.Setup(e => e.Resolve<IPhoneValidator>(string.Empty)).Returns(phoneValidator.Object);
-        serviceLocator.Setup(e => e.Resolve<IPhoneSaver>(string.Empty)).Returns(phoneSaver.Object);
-        serviceLocator.Setup(e => e.Resolve<IMobileStore>(string.Empty)).Returns(mobileStore.Object);
+        serviceLocator.Setup(e => e.Resolve<IPhoneReader>(string.Empty, true)).Returns(phoneReader.Object);
+        serviceLocator.Setup(e => e.Resolve<IPhoneBinder>(string.Empty, true)).Returns(phoneBinder.Object);
+        serviceLocator.Setup(e => e.Resolve<IPhoneValidator>(string.Empty, true)).Returns(phoneValidator.Object);
+        serviceLocator.Setup(e => e.Resolve<IPhoneSaver>(string.Empty, true)).Returns(phoneSaver.Object);
+        serviceLocator.Setup(e => e.Resolve<IMobileStore>(string.Empty, true)).Returns(mobileStore.Object);
 
         phoneReader.Setup(e => e.GetInputData()).Returns(phoneData);
         phoneBinder.Setup(e => e.CreatePhone(phoneData)).Returns(modelPhone);
@@ -52,11 +52,11 @@ public class FirstTest
         ms.Process();
 
         //Assert
-        serviceLocator.Verify(e=>e.Resolve<IPhoneReader>(""), Times.Once);
-        serviceLocator.Verify(e => e.Resolve<IPhoneBinder>(""), Times.Once);
-        serviceLocator.Verify(e => e.Resolve<IPhoneValidator>(""), Times.Once);
-        serviceLocator.Verify(e => e.Resolve<IPhoneSaver>(""), Times.Once);
-        serviceLocator.Verify(e => e.Resolve<IMobileStore>(""), Times.Once);
+        serviceLocator.Verify(e=>e.Resolve<IPhoneReader>("", true), Times.Once);
+        serviceLocator.Verify(e => e.Resolve<IPhoneBinder>("", true), Times.Once);
+        serviceLocator.Verify(e => e.Resolve<IPhoneValidator>("", true), Times.Once);
+        serviceLocator.Verify(e => e.Resolve<IPhoneSaver>("", true), Times.Once);
+        serviceLocator.Verify(e => e.Resolve<IMobileStore>("", true), Times.Once);
 
         phoneReader.Verify(e => e.GetInputData(), Times.Once);
         phoneBinder.Verify(e => e.CreatePhone(phoneData), Times.Once);
