@@ -11,56 +11,56 @@
 
         public int [] Calc(int m)
         {
-            var j = 1;
+            var prime = 1;
             var k = 1;
             while (k < m)
             {
-                j = GetPrimeNumber(j);
-                P[++k] = j;
+                prime = GetPrimeNumber(prime);
+                P[++k] = prime;
             }
             return P;
         }
 
-        int GetPrimeNumber(int j)
+        int GetPrimeNumber(int prime)
         {
             var ord = 2;
             var square = 9;
-            bool jIsPrime;
+            var isPrime=false;
 
             do
             {
-                j += 2;
-                var result = VerifyJEqualsSquare(ord, square, j);
-                square = result.Item2;
-                jIsPrime = FindPrimeNumber(result.Item1, j);
-            } while (!jIsPrime);
+                prime += 2;
+                if (prime == square)
+                    square = GetSquare(prime, ref ord);
+                else
+                    isPrime = IsPrime(prime, ord);
+            } while (!isPrime);
 
-            return j;
+            return prime;
         }
 
-        bool FindPrimeNumber(int ord, int j)
+        private bool IsPrime(int prime, int ord)
         {
             var n = 2;
             var isPrime = true;
             while (n < ord && isPrime)
             {
-                while (Mult[n] < j)
+                while (Mult[n] < prime)
                     Mult[n] += 2 * P[n];
-                if (Mult[n] == j)
+                if (Mult[n] == prime)
                     isPrime = false;
                 n++;
             }
             return isPrime;
         }
 
-        Tuple<int,int> VerifyJEqualsSquare(int ord, int square, int j)
+        int GetSquare(int prime, ref int ord)
         {
-            if (j != square) return new Tuple<int, int>(ord, square);
             ord++;
-            square = P[ord] * P[ord];
-            Mult[ord - 1] = j;
-            return new Tuple<int, int>(ord, square);
+            Mult[ord - 1] = prime;
+            return P[ord] * P[ord];
         }
+
 
         public int[] P { get; set; }
         public int[] Mult { get; set; }
