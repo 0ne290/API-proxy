@@ -17,8 +17,6 @@ public class PrimesSettings
         PageNumber = 1;
     }
 
-
-
     public int OrdMax { get; set; }
     public int M { get; set; }
     public int PageNumber { get; set; }

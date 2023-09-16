@@ -2,33 +2,25 @@
 {
     public class PrimeNumberGenerator
     {
-        public PrimeNumberGenerator(PrimesData primesData)
-        {
-            PrimesData = primesData;
-        }
-
-        public int [] Calc(int m)
+        public int [] Calc(PrimesData data)
         {
             var prime = 1;
             var k = 1;
-            while (k < m)
-            {
-                var ord = 2;
+            while (k < data.M)
+            { 
                 var square = 9;
                 var isPrime = false;
 
                 do
                 {
                     prime += 2;
-                    if (prime == square) square = PrimesData.GetSquare(prime, ref ord);
-                    else isPrime = PrimesData.IsPrime(prime, ord);
+                    if (prime == square) square = data.GetSquare(prime);
+                    else isPrime = data.IsPrime(prime);
                 } while (!isPrime);
 
-                PrimesData.SetPrime(k++, prime);
+                data.SetPrime(k++, prime);
             }
-            return PrimesData.P;
+            return data.P;
         }
-
-        PrimesData PrimesData { get; }
     }
 }
