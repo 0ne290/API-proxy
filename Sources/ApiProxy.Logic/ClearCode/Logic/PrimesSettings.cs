@@ -4,26 +4,19 @@ public class PrimesSettings
 {
     public PrimesSettings()
     {
-        OrdMax = OrdMaxVal;
         M = MVal;
+        OrdMax = OrdMaxVal;
+        Rr = RrVal;
+        Cc = CcVal;
     }
 
-    public void InitPageNumber()
-    {
-        PageNumber = 1;
-    }
-    public void InitPageOffset()
-    {
-        PageNumber = 1;
-    }
-
-    public int OrdMax { get; set; }
     public int M { get; set; }
-    public int PageNumber { get; set; }
-    public int PageOffset { get; set; }
+    public int OrdMax { get; set; }
+    public int Rr { get; set; }
+    public int Cc { get; set; }
 
-    public static int MVal = 1000;
-    public const int Rr = 50;
-    public const int Cc = 4;
-    public static int OrdMaxVal = 30;
+    static int MVal = 1000;
+    static int OrdMaxVal = 30;
+    static int RrVal = 50;
+    static int CcVal = 4;
 }
