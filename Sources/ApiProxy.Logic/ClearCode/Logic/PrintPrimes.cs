@@ -1,8 +1,10 @@
-﻿namespace ApiProxy.Logic.ClearCode.Logic;
+﻿using ApiProxy.Logic.ClearCode.Interfaces;
 
-public class PrintPrimes
+namespace ApiProxy.Logic.ClearCode.Logic;
+
+public class PrintPrimes : IPrintPrimes
 {
-    public PrintPrimes(PrimesSettings settings)
+    public PrintPrimes(IPrimesSettings settings)
     {
         M = settings.M;
         Rr = settings.Rr;
@@ -32,7 +34,7 @@ public class PrintPrimes
         }
     }
 
-    public int M { get; set; }
-    public int Rr { get; set; }
-    public int Cc { get; set; }
+    int M { get; }
+    int Rr { get; }
+    int Cc { get; }
 }

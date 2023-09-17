@@ -1,6 +1,8 @@
-﻿namespace ApiProxy.Logic.ClearCode.Logic;
+﻿using ApiProxy.Logic.ClearCode.Interfaces;
 
-public class PrimesSettings
+namespace ApiProxy.Logic.ClearCode.Logic;
+
+public class PrimesSettings : IPrimesSettings
 {
     public PrimesSettings()
     {

@@ -1,8 +1,10 @@
-﻿namespace ApiProxy.Logic.ClearCode.Logic;
+﻿using ApiProxy.Logic.ClearCode.Interfaces;
 
-public class PrimesData
+namespace ApiProxy.Logic.ClearCode.Logic;
+
+public class PrimesData : IPrimesData
 {
-    public PrimesData(PrimesSettings settings)
+    public PrimesData(IPrimesSettings settings)
     {
         Ord = 2;
         M = settings.M;

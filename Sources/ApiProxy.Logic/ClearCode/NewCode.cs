@@ -1,18 +1,23 @@
-﻿using ApiProxy.Logic.ClearCode.Logic;
+﻿using ApiProxy.Logic.ClearCode.Interfaces;
+using ApiProxy.Logic.Refactoring;
 
 namespace ApiProxy.Logic.ClearCode;
 
-public class NewCode
+public class NewCode : INewCode
 {
-    public static void Main(string[] args)
+    public NewCode(IServiceLocator serviceLocator)
     {
-        var primesSettings = new PrimesSettings();
-        var primesData = new PrimesData(primesSettings.OrdMax, primesSettings.M);
+        ServiceLocator = serviceLocator;
+    }
 
-        var primeNumberGenerator = new PrimeNumberGenerator();
-        var printPrimes = new PrintPrimes(primesSettings);
+    public void Execute(string[] args)
+    {
+        var primeNumberGenerator = ServiceLocator.Resolve<IPrimeNumberGenerator>();
+        var printPrimes = ServiceLocator.Resolve<IPrintPrimes>();
 
         var p = primeNumberGenerator.Calc(primesData);
         printPrimes.Print(p);
     }
+
+    IServiceLocator ServiceLocator { get; }
 }
