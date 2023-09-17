@@ -14,7 +14,7 @@ namespace ApiProxy.Tests
         {
             //arrange
             registratorTypes.RegisterAllTypes(ServiceLocator.Current);
-            var programm = ServiceLocator.Current.Resolve<INewCode>();
+            var programm = ServiceLocator.Current.Resolve<IMain>();
 
             //act
             programm.Execute(args);

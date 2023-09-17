@@ -20,6 +20,6 @@ public class RegistratorTypes
                 var settings = locator.Resolve<IPrimesSettings>();
                 return new PrintPrimes(settings);
             })
-            .AddSingleton<INewCode>(locator => new NewCode(locator));
+            .AddSingleton<IMain>(locator => new Main(locator));
     }
 }
