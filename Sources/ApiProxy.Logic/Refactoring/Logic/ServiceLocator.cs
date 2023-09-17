@@ -44,7 +44,7 @@ public class ServiceLocator : IServiceLocator
         return this;
     }
 
-    public TInterface Resolve<TInterface>(string key = "")
+    public TInterface Resolve<TInterface>(string key = "", bool isLifeCycleManagement=true)
     {
         var value = Store[typeof(TInterface)][key] switch
         {
@@ -53,7 +53,7 @@ public class ServiceLocator : IServiceLocator
                 Resolve<IServiceLocator>()),
             _ => ((Lazy<TInterface>)Store[typeof(TInterface)][key]).Value
         };
-        if (value is not IDisposable) return value;
+        if (value is not IDisposable||!isLifeCycleManagement) return value;
         if (!StoreDisposableObjects.ContainsKey(typeof(TInterface)))
             StoreDisposableObjects[typeof(TInterface)] = new ConcurrentDictionary<Guid, object>();
         StoreDisposableObjects[typeof(TInterface)][Guid.NewGuid()] = value;
