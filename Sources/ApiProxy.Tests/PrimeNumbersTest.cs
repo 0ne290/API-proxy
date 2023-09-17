@@ -1,7 +1,7 @@
 ﻿using ApiProxy.Logic.ClearCode;
 using ApiProxy.Logic.ClearCode.Interfaces;
 using ApiProxy.Logic.Refactoring.Logic;
-using AutoFixture.Xunit2;
+using Tests.AAAPattern.xUnit.Attributes;
 using Xunit;
 
 namespace ApiProxy.Tests
@@ -9,7 +9,7 @@ namespace ApiProxy.Tests
     public class PrimeNumbersTest
     {
         [Theory]
-        [InlineAutoData]
+        [MoqAutoData]
         public void NewCodeExecute_Test(RegistratorTypes registratorTypes, string[] args)
         {
             //arrange
