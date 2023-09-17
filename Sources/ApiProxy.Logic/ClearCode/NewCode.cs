@@ -15,7 +15,7 @@ public class NewCode : INewCode
         var primeNumberGenerator = ServiceLocator.Resolve<IPrimeNumberGenerator>();
         var printPrimes = ServiceLocator.Resolve<IPrintPrimes>();
 
-        var p = primeNumberGenerator.Calc(primesData);
+        var p = primeNumberGenerator.Calc();
         printPrimes.Print(p);
     }
 
