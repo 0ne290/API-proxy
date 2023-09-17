@@ -25,7 +25,7 @@ public class PrintPrimes : IPrintPrimes
             {
                 for (var c = 0; c < Cc; c++)
                     if (rowOffset + c * Rr <= M)
-                        Console.WriteLine($"{p[rowOffset + c * Rr]:d10}");
+                        Console.Write($"{p[rowOffset + c * Rr]:d10}");
                 Console.WriteLine(string.Empty);
             }
             Console.WriteLine("\f");

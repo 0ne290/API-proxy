@@ -16,11 +16,11 @@ public class PrimeNumberGenerator : IPrimeNumberGenerator
 
         var prime = 1;
         var k = 1;
+        var square = 9;
+
         while (k < data.M)
         { 
-            var square = 9;
             var isPrime = false;
-
             do
             {
                 prime += 2;
