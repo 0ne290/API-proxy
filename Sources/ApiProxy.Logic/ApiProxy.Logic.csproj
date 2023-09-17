@@ -8,12 +8,10 @@
 
   <ItemGroup>
     <Compile Remove="ClearCode\OldCode.cs" />
-    <Compile Remove="ClearCode\ннн.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="ClearCode\OldCode.cs" />
-    <None Include="ClearCode\ннн.cs" />
   </ItemGroup>
 
   <ItemGroup>

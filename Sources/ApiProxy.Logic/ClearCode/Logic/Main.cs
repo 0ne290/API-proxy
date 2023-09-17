@@ -1,11 +1,11 @@
 ﻿using ApiProxy.Logic.ClearCode.Interfaces;
 using ApiProxy.Logic.Refactoring;
 
-namespace ApiProxy.Logic.ClearCode;
+namespace ApiProxy.Logic.ClearCode.Logic;
 
-public class NewCode : INewCode
+public class Main : IMain
 {
-    public NewCode(IServiceLocator serviceLocator)
+    public Main(IServiceLocator serviceLocator)
     {
         ServiceLocator = serviceLocator;
     }
