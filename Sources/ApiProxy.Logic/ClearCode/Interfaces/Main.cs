@@ -1,6 +1,6 @@
 ﻿namespace ApiProxy.Logic.ClearCode.Interfaces;
 
-public interface INewCode
+public interface IMain
 {
     void Execute(string[] args);
 }
