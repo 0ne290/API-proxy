@@ -28,7 +28,7 @@ public class PrimeNumberGenerator : IPrimeNumberGenerator
                 else isPrime = data.IsPrime(prime);
             } while (!isPrime);
 
-            data.SetPrime(k++, prime);
+            data.SetPrime(++k, prime);
         }
         return data.P;
     }
