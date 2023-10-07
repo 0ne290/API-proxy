@@ -1,7 +1,6 @@
-﻿using ApiProxy.Logic;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
-namespace ApiProxy.UI;
+namespace ApiProxy.Logic;
 
 public class ServiceLocator : IServiceLocator
 {

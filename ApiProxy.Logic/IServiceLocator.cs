@@ -1,4 +1,6 @@
-﻿namespace ApiProxy.Logic;
+﻿using System.Linq.Expressions;
+
+namespace ApiProxy.Logic;
 
 public interface IServiceLocator : IDisposable
 {
@@ -7,5 +9,4 @@ public interface IServiceLocator : IDisposable
     IServiceLocator AddSingleton<TInterface>(Func<IServiceLocator, TInterface> functor, string key = "");
     IServiceLocator AddSingleton<TInterface>(Func<TInterface> functor, string key = "");
     TInterface Resolve<TInterface>(string key = "", bool isLifeCycleManagement = true);
-    static IServiceLocator Current { get; }
 }
