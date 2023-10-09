@@ -7,5 +7,4 @@ public interface IServiceLocator : IDisposable
     IServiceLocator AddSingleton<TInterface>(Func<IServiceLocator, TInterface> functor, string key = "");
     IServiceLocator AddSingleton<TInterface>(Func<TInterface> functor, string key = "");
     TInterface Resolve<TInterface>(string key = "", bool isLifeCycleManagement = true);
-    static IServiceLocator Current { get; }
 }

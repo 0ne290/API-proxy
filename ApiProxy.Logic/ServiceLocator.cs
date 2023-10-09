@@ -1,7 +1,6 @@
-﻿using ApiProxy.Logic;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
-namespace ApiProxy.UI;
+namespace ApiProxy.Logic;
 
 public class ServiceLocator : IServiceLocator
 {
@@ -63,8 +62,8 @@ public class ServiceLocator : IServiceLocator
     public void Dispose()
     {
         if (StoreDisposableObjects.Count <= 0) return;
-        //StoreDisposableObjects.Keys.Select(key => StoreDisposableObjects[key]).Where(e => e.Count > 0)
-        //    .SelectMany(e => e.ToList()).ForEach(e => ((IDisposable)e.Value).Dispose());
+        StoreDisposableObjects.Keys.Select(key => StoreDisposableObjects[key]).Where(e => e.Count > 0)
+            .SelectMany(e => e.ToList()).ToList().ForEach(e => ((IDisposable)e.Value).Dispose());
         StoreDisposableObjects.Clear();
         Store.Clear();
     }
