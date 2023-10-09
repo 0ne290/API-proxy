@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace ApiProxy.Logic;
+﻿namespace ApiProxy.Logic;
 
 public interface IServiceLocator : IDisposable
 {

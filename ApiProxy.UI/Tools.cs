@@ -1,16 +1,29 @@
 using System.Net;
-using Serilog;
+using ApiProxy.Logic;
 
 namespace ApiProxy.UI
 {
-    public static class Tools
+    public interface ITools
     {
-        public static void ErrorProcessing(Exception exception)
-		{
+        void ErrorProcessing(Exception exception);
+    }
+
+    public class Tools:ITools
+    {
+        public Tools(IServiceLocator serviceLocator)
+        {
+            ServiceLocator = serviceLocator;
+        }
+
+        public void ErrorProcessing(Exception exception)
+        {
+            var log = ServiceLocator.Resolve<Serilog.ILogger>();
 			if (exception.Message == "ErrorProcessingException")
-                Log.Warning($"ErrorProcessingException! StatusCode: {(HttpStatusCode)exception.Data["StatusCode"]}; Messages: {(string)exception.Data["Message1"]}; {(string)exception.Data["Message2"]}; StackTrace: {exception.StackTrace}");
+                log.Warning($"ErrorProcessingException! StatusCode: {(HttpStatusCode)exception.Data["StatusCode"]}; Messages: {(string)exception.Data["Message1"]}; {(string)exception.Data["Message2"]}; StackTrace: {exception.StackTrace}");
             else
-                Log.Error($"AnyException! Message: {exception.Message}; StackTrace: {exception.StackTrace}");
+                log.Error($"AnyException! Message: {exception.Message}; StackTrace: {exception.StackTrace}");
 		}
+
+        IServiceLocator ServiceLocator { get; set; }
     }
 }
