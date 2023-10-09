@@ -1,23 +1,27 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ApiProxy.Logic;
 
 public interface IJwtCreator
 {
-    object Create(string? merchantId);
+    string? GetName(HttpContext context);
+    object GetRefreshToken(Dto.Repository.Merchant merchant);
+    object GetAccessToken(Dto.Repository.Merchant merchant);
 }
 
 public class JwtCreator : IJwtCreator
 {
-    public object Create(string? merchantId)
+    public object GetRefreshToken(Dto.Repository.Merchant merchant)
     {
         var claims = new List<Claim>
         {
-            new("MerchantGuid", merchantId), 
+            new("MerchantGuid", merchant.Guid),
             new("IdentityRole", "RefreshToken")
         };
+
         var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
             audience: AuthOptions.AUDIENCE,
@@ -25,6 +29,30 @@ public class JwtCreator : IJwtCreator
             expires: DateTime.UtcNow.Add(TimeSpan.FromDays(60)),
             signingCredentials: new SigningCredentials(AuthOptions.KEY, SecurityAlgorithms.HmacSha256)
         );
-        var rt = new JwtSecurityTokenHandler().WriteToken(jwt);
-        return new { RefreshToken = rt };
+
+        var refreshToken = new JwtSecurityTokenHandler().WriteToken(jwt);
+        return new { RefreshToken = refreshToken };
+    }
+
+    public object GetAccessToken(Dto.Repository.Merchant merchant)
+    {
+        var claims = new List<Claim>
+        {
+            new("MerchantGuid", merchant.Guid), 
+            new("IdentityRole", "AccessToken")
+        };
+        
+        var jwt = new JwtSecurityToken(
+            issuer: AuthOptions.ISSUER,
+            audience: AuthOptions.AUDIENCE,
+            claims: claims,
+            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(10)),
+            signingCredentials: new SigningCredentials(AuthOptions.KEY, SecurityAlgorithms.HmacSha256)
+        );
+
+        var accessToken = new JwtSecurityTokenHandler().WriteToken(jwt);
+        return new { AccessToken = accessToken };
+    }
+
+    public string? GetName(HttpContext context) => context.User.Identity?.Name;
 }
